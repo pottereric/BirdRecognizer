@@ -14,11 +14,11 @@ namespace BirdRecognizerRest
     {
         private static List<string> testImages = new List<string>()
         {
-            @"C:\i\bird.jpg",
-            @"C:\i\bird2.jpg",
-            @"C:\i\dog.jpg",
-            @"C:\i\cat.jpg",
-            @"C:\i\snake.jpg",
+            @"..\..\..\TestImages\bird.jpg",
+            @"..\..\..\TestImages\bird2.jpg",
+            @"..\..\..\TestImages\dog.jpg",
+            @"..\..\..\TestImages\cat.jpg",
+            @"..\..\..\TestImages\snake.jpg",
         };
 
         static async Task Main(string[] args)
