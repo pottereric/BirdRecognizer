@@ -1,16 +1,15 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace BirdRecognizerRest
 {
-    class Program
+    internal class Program
     {
         private static List<string> testImages = new List<string>()
         {
@@ -21,7 +20,7 @@ namespace BirdRecognizerRest
             @"..\..\..\TestImages\snake.jpg",
         };
 
-        static async Task Main(string[] args)
+        private static async Task Main(string[] args)
         {
             foreach (var testImage in testImages)
             {
@@ -33,24 +32,22 @@ namespace BirdRecognizerRest
             Console.ReadKey();
         }
 
-        static async Task<bool> ImageIsBird(string imagePath, double confidenceThreshold)
+        private static async Task<bool> ImageIsBird(string imagePath, double confidenceThreshold)
         {
             var tags = await MakeAnalysisRequest(imagePath);
-
             return tags.Any(t => t.name.ToLower() == "bird");
         }
 
         #region subsription Information
-        const string subscriptionKey = "-your-subscription-key-";
-        const string uriBase = "-your-cognitive-services-url-";
-        #endregion
-
+        private const string subscriptionKey = "-your-subscription-key-";
+        private const string uriBase = "-your-cognitive-services-url-";
+        #endregion subsription Information
 
         /// <summary>
         /// Gets the analysis of the specified image file by using the Computer Vision REST API.
         /// </summary>
         /// <param name="imageFilePath">The image file.</param>
-        static async Task<List<Tag>> MakeAnalysisRequest(string imageFilePath)
+        private static async Task<List<Tag>> MakeAnalysisRequest(string imageFilePath)
         {
             HttpClient client = new HttpClient();
 
@@ -75,19 +72,15 @@ namespace BirdRecognizerRest
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
 
                 // Execute the REST API call.
-                //response = await client.PostAsync(uri, content);
-                response = client.PostAsync(uri, content).GetAwaiter().GetResult();
+                response = await client.PostAsync(uri, content);
 
                 // Get the JSON response.
                 string contentString = await response.Content.ReadAsStringAsync();
 
-                // Display the JSON response.
-                //Console.WriteLine((contentString));
                 var tagData = JsonConvert.DeserializeObject<TagData>(contentString);
 
                 return tagData.tags;
             }
-
         }
 
         /// <summary>
@@ -95,12 +88,11 @@ namespace BirdRecognizerRest
         /// </summary>
         /// <param name="imageFilePath">The image file to read.</param>
         /// <returns>The byte array of the image data.</returns>
-        static byte[] GetImageAsByteArray(string imageFilePath)
+        private static byte[] GetImageAsByteArray(string imageFilePath)
         {
             FileStream fileStream = new FileStream(imageFilePath, FileMode.Open, FileAccess.Read);
             BinaryReader binaryReader = new BinaryReader(fileStream);
             return binaryReader.ReadBytes((int)fileStream.Length);
         }
-
     }
 }
